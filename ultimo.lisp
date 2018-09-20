@@ -28,6 +28,23 @@
 ;;;; The program should be implemented in either C, C++, Java or Python. The implementation should be efficient and it should be able to handle one input file within a second. If you are using Python, the program should take less than 3 seconds for one input.
 
 
+
+
+(with-open-file (stream "./input.txt")
+  (let ((n (read stream))
+        (a (read stream))
+        (b (read stream)))
+    (format t  "~&headers ~A~%" (list n a b))
+    (loop for i upto (- n 1)
+          collect
+          (let ((w-row (if (equal (read stream) 'NS) 'n 'y))
+                (v-row (read stream)))
+            (format t "~&row: ~A ~A~%" v-row w-row)
+            (list v-row w-row)))))
+
+
+
+
 (let* ((params '(:n 1 :a 1 :b 3))
        (data   '((1 y)))
        ;; (n (getf params :n))
@@ -35,12 +52,16 @@
        (b (getf params :b))
        (first-pair (first data))
        (final-pair (first (last data))))
+  ;; TODO: make sure data input is sorted
   ;; TODO: check no rows outside A..B before padding
   (if (not (= (first first-pair) a))
       (setf data (cons (list a (second first-pair)) data)))
   (if (not (= (first final-pair) b))
       (setf data (append data (list (list b (second final-pair))))))
   data)
+
+
+
 
 (defun count-swords (data)
   (let ((scount 0))
@@ -66,8 +87,8 @@
               (when (equal w1 'y)
                 (incf scount (- (floor vm) v1)))
               (when (equal w2 'y)
-                (incf scount (- v2 (ceiling vm)))))
-            )))) scount))
+                (incf scount (- v2 (ceiling vm)))))))))
+    scount))
 
 
 (equal
