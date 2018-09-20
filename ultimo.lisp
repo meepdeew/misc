@@ -48,7 +48,7 @@
 (ceiling (/ 5 2))
 
 
-(let ((data '((1 y) (4 y) (7 n)))
+(let ((data '((1 y) (6 y)))
       (sword-count 0))
   (loop for (p1 p2) on data do
     (block loop-liner
@@ -62,19 +62,17 @@
 
           (when (oddp num-btwn)
             (when (or (equal (second p1) 'y) (equal (second p2) 'y))
-              (format t "~&inc for midpt at ~a~%" vm)
               (incf sword-count))
             (when (equal (second p1) 'y)
-              (format t "~&btwn ~a and ~a are ~a spots~%" v1 vm (- vm v1 1))
               (incf sword-count (- vm v1 1)))
             (when (equal (second p2) 'y)
-              (format t "~&btwn ~a and ~a are ~a spots~%" vm v2 (- v2 vm 1))
-              (incf sword-count (- v2 vm 1)))
-            (format t "~&odd dif, midpt btwn ~a and ~a is ~a~%" v1 v2 vm))
+              (incf sword-count (- v2 vm 1))))
 
           (when (evenp num-btwn)
-            (format t "~&even dif, btwn ~a and ~a are ~a and ~a~%"
-                    v1 v2 (floor vm) (ceiling vm)))
+            (when (equal (second p1) 'y)
+              (incf sword-count (- (floor vm) v1)))
+            (when (equal (second p2) 'y)
+              (incf sword-count (- v2 (ceiling vm)))))
 
           )))) sword-count)
 
@@ -91,6 +89,10 @@
 '((1 y) (3 y));3
 
 ;;; 1 _ _ 4     --> (evenp num-btwn)
+'((1 n) (4 n));0
+'((1 n) (4 y));2
+'((1 y) (4 n));2
+'((1 y) (4 y));4
 
 ;;; 1 _ _ _ 5   --> (oddp num-btwn)
 '((1 n) (5 n));0
@@ -99,6 +101,10 @@
 '((1 y) (5 y));5
 
 ;;; 1 _ _ _ _ 6 --> (evenp num-btwn)
+'((1 n) (6 n));0
+'((1 n) (6 y));3
+'((1 y) (6 n));3
+'((1 y) (6 y));6
 
 ;;; 1 _ _ 4 _ _ 7
 '((1 y) (4 y) (7 n));4
