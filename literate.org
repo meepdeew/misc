@@ -1,0 +1,25 @@
+*** Remove duplicate strings from array
+
+JavaScript
+#+BEGIN_SRC js
+function rmdupes (array) {
+    var obj = {};
+    var i = 0;
+    array.forEach(function (val, idx) {
+        obj[val] = true;
+    });
+    var uniqs = Object.keys(obj);
+    uniqs.forEach(function (val, idx) {
+        array[i] = val;
+        i++;
+    });
+    array.length = i;
+    return array;
+}
+
+#+END_SRC
+
+Common Lisp
+#+BEGIN_SRC lisp
+(setf array (remove-duplicates array :test (function string=)))
+#+END_SRC
