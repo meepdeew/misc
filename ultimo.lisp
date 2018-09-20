@@ -39,39 +39,39 @@
       (setf data (cons (list a (second first-pair)) data)))
   (if (not (= (first final-pair) b))
       (setf data (append data (list (list b (second final-pair))))))
-  (loop ))
+  data)
 
 ;;; 2 1 3
 ;;; S  1
 ;;; NS 3
-(equal 'y 'y)
+(floor (/ 5 2))
+(ceiling (/ 5 2))
 
-(let ((data '((1 y) (3 y)))
-      (has-sword '0))
+(let ((data '((1 y) (6 y)))
+      (sword-count 0))
+
   (loop for (p1 p2) on data do
-    (when (null p2)
-      (when (equal (second p1) 'y)
-        (incf has-sword))
-      (return has-sword))
-    (let ((diff (- (car p2) (car p1))))
-      (if (= diff 1)
-          (if (equal (car p1) 'y)
-              (incf has-sword)))
-      ;; (if (and (> diff 1) (oddp (- diff 1)))
-      ;;     (print "odd dif"))
-      ;; (if (and (> diff 1) (evenp (- diff 1)))
-      ;;     (print "even dif"))
-      )))
+    (block loop-liner
+      (let ((v1 (car p1))
+            (v2 (car p2)))
 
-(loop for x in '(1 2 3 4 5 6) do
-  (unless (evenp x)
-    (print x)))
+        (when (null p2)
+          (when (equal (second p1) 'y)
+            (incf sword-count))
+          (return-from loop-liner))
 
-;; return
-;; continue
+        (let ((num-btwn (- v2 v1 1))
+              (vm (/ (+ v1 v2) 2)))
+          (if (zerop num-btwn)
+              (if (equal (second p1) 'y)
+                  (incf sword-count)))
 
-(loop for x in '(1 2 3 4 5) do
-  (block block-name
-    (if (evenp x)
-        (return-from block-name))
-    (print x)))
+          (if (oddp num-btwn)
+              (format t "~&odd dif, midpt btwn ~a and ~a is ~a~%"
+                      v1 v2 vm))
+
+          (if (evenp num-btwn)
+              (format t "~&even dif, btwn ~a and ~a are ~a and ~a~%"
+                      v1 v2 (floor vm) (ceiling vm)))
+
+          )))) sword-count)
