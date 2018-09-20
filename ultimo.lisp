@@ -30,22 +30,18 @@
 
 (let* ((params '(:n 1 :a 1 :b 3))
        (data   '((1 y)))
-       (n (getf params :n))
+       ;; (n (getf params :n))
        (a (getf params :a))
        (b (getf params :b))
        (first-pair (first data))
        (final-pair (first (last data))))
+  ;; TODO: check no rows outside A..B before padding
   (if (not (= (first first-pair) a))
       (setf data (cons (list a (second first-pair)) data)))
   (if (not (= (first final-pair) b))
       (setf data (append data (list (list b (second final-pair))))))
   data)
 
-;;; 2 1 3
-;;; S  1
-;;; NS 3
-(floor (/ 5 2))
-(ceiling (/ 5 2))
 
 
 (let ((data '((1 y) (6 y)))
@@ -53,27 +49,26 @@
   (loop for (p1 p2) on data do
     (block loop-liner
       (let ((v1 (car p1))
-            (v2 (car p2)))
+            (v2 (car p2))
+            (w1 (second p1))
+            (w2 (second p2)))
         (when (equal (second p1) 'y) (incf sword-count))
         (when (null p2) (return-from loop-liner))
         (let ((num-btwn (- v2 v1 1))
               (vm (/ (+ v1 v2) 2)))
           (when (zerop num-btwn) (return-from loop-liner))
-
           (when (oddp num-btwn)
-            (when (or (equal (second p1) 'y) (equal (second p2) 'y))
+            (when (or (equal w1 'y) (equal w2 'y))
               (incf sword-count))
-            (when (equal (second p1) 'y)
+            (when (equal w1 'y)
               (incf sword-count (- vm v1 1)))
-            (when (equal (second p2) 'y)
+            (when (equal w2 'y)
               (incf sword-count (- v2 vm 1))))
-
           (when (evenp num-btwn)
-            (when (equal (second p1) 'y)
+            (when (equal w1 'y)
               (incf sword-count (- (floor vm) v1)))
-            (when (equal (second p2) 'y)
+            (when (equal w2 'y)
               (incf sword-count (- v2 (ceiling vm)))))
-
           )))) sword-count)
 
 ;;; 1 2         --> (zerop num-btwn)
