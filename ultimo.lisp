@@ -42,64 +42,162 @@
       (setf data (append data (list (list b (second final-pair))))))
   data)
 
+(defun count-swords (data)
+  (let ((scount 0))
+    (loop for (p1 p2) on data do
+      (block loop-liner
+        (let ((v1 (car p1))
+              (v2 (car p2))
+              (w1 (second p1))
+              (w2 (second p2)))
+          (when (equal (second p1) 'y) (incf scount))
+          (when (null p2) (return-from loop-liner))
+          (let ((num-btwn (- v2 v1 1))
+                (vm (/ (+ v1 v2) 2)))
+            (when (zerop num-btwn) (return-from loop-liner))
+            (when (oddp num-btwn)
+              (when (or (equal w1 'y) (equal w2 'y))
+                (incf scount))
+              (when (equal w1 'y)
+                (incf scount (- vm v1 1)))
+              (when (equal w2 'y)
+                (incf scount (- v2 vm 1))))
+            (when (evenp num-btwn)
+              (when (equal w1 'y)
+                (incf scount (- (floor vm) v1)))
+              (when (equal w2 'y)
+                (incf scount (- v2 (ceiling vm)))))
+            )))) scount))
 
 
-(let ((data '((1 y) (6 y)))
-      (sword-count 0))
-  (loop for (p1 p2) on data do
-    (block loop-liner
-      (let ((v1 (car p1))
-            (v2 (car p2))
-            (w1 (second p1))
-            (w2 (second p2)))
-        (when (equal (second p1) 'y) (incf sword-count))
-        (when (null p2) (return-from loop-liner))
-        (let ((num-btwn (- v2 v1 1))
-              (vm (/ (+ v1 v2) 2)))
-          (when (zerop num-btwn) (return-from loop-liner))
-          (when (oddp num-btwn)
-            (when (or (equal w1 'y) (equal w2 'y))
-              (incf sword-count))
-            (when (equal w1 'y)
-              (incf sword-count (- vm v1 1)))
-            (when (equal w2 'y)
-              (incf sword-count (- v2 vm 1))))
-          (when (evenp num-btwn)
-            (when (equal w1 'y)
-              (incf sword-count (- (floor vm) v1)))
-            (when (equal w2 'y)
-              (incf sword-count (- v2 (ceiling vm)))))
-          )))) sword-count)
+(equal
+ (loop for x in
+       '(((1 n) (2 n))
+         ((1 y) (2 n))
+         ((1 n) (2 y))
+         ((1 y) (2 y)))
+       collect (count-swords x))
+       '(0 1 1 2))
+
+(equal
+ (loop for x in
+       '(((1 n) (3 n))
+         ((1 y) (3 n))
+         ((1 n) (3 y))
+         ((1 y) (3 y)))
+       collect (count-swords x))
+ '(0 2 2 3))
+
+(equal
+ (loop for x in
+       '(((1 n) (4 n))
+         ((1 n) (4 y))
+         ((1 y) (4 n))
+         ((1 y) (4 y)))
+       collect (count-swords x))
+ '(0 2 2 4))
+
+(equal
+ (loop for x in
+       '(((1 n) (5 n))
+         ((1 y) (5 n))
+         ((1 n) (5 y))
+         ((1 y) (5 y)))
+       collect (count-swords x))
+ '(0 3 3 5))
+
+(equal
+ (loop for x in
+       '(((1 n) (6 n))
+         ((1 n) (6 y))
+         ((1 y) (6 n))
+         ((1 y) (6 y)))
+       collect (count-swords x))
+ '(0 3 3 6))
+
+(equal
+ (loop for x in
+       '(((1 n) (3 n) (4 n))
+         ((1 y) (3 n) (4 n))
+         ((1 n) (3 y) (4 n))
+         ((1 n) (3 n) (4 y))
+         ((1 y) (3 y) (4 n))
+         ((1 y) (3 n) (4 y))
+         ((1 n) (3 y) (4 y))
+         ((1 y) (3 y) (4 y)))
+       collect (count-swords x))
+ '(0 2 2 1 3 3 3 4))
+
+(equal
+ (loop for x in
+       '(((1 n) (2 n) (4 n))
+         ((1 y) (2 n) (4 n))
+         ((1 n) (2 y) (4 n))
+         ((1 n) (2 n) (4 y))
+         ((1 y) (2 y) (4 n))
+         ((1 y) (2 n) (4 y))
+         ((1 n) (2 y) (4 y))
+         ((1 y) (2 y) (4 y)))
+       collect (count-swords x))
+ '(0 1 2 2 3 3 3 4))
+
+
+;;; TODO: 1 _ _ 4 _ _ 7
+'((1 y) (4 y) (7 n));4
+
 
 ;;; 1 2         --> (zerop num-btwn)
-'((1 n) (2 n));0
-'((1 y) (2 n));1
-'((1 n) (2 y));1
-'((1 y) (2 y));2
+;; '((1 n) (2 n));0
+;; '((1 y) (2 n));1
+;; '((1 n) (2 y));1
+;; '((1 y) (2 y));2
+
 
 ;;; 1 _ 3       --> (oddp num-btwn)
-'((1 n) (3 n));0
-'((1 y) (3 n));2
-'((1 n) (3 y));2
-'((1 y) (3 y));3
+;; '((1 n) (3 n));0
+;; '((1 y) (3 n));2
+;; '((1 n) (3 y));2
+;; '((1 y) (3 y));3
+
 
 ;;; 1 _ _ 4     --> (evenp num-btwn)
-'((1 n) (4 n));0
-'((1 n) (4 y));2
-'((1 y) (4 n));2
-'((1 y) (4 y));4
+;; '((1 n) (4 n));0
+;; '((1 n) (4 y));2
+;; '((1 y) (4 n));2
+;; '((1 y) (4 y));4
+
 
 ;;; 1 _ _ _ 5   --> (oddp num-btwn)
-'((1 n) (5 n));0
-'((1 y) (5 n));3
-'((1 n) (5 y));3
-'((1 y) (5 y));5
+;; '((1 n) (5 n));0
+;; '((1 y) (5 n));3
+;; '((1 n) (5 y));3
+;; '((1 y) (5 y));5
+
 
 ;;; 1 _ _ _ _ 6 --> (evenp num-btwn)
-'((1 n) (6 n));0
-'((1 n) (6 y));3
-'((1 y) (6 n));3
-'((1 y) (6 y));6
+;; '((1 n) (6 n));0
+;; '((1 n) (6 y));3
+;; '((1 y) (6 n));3
+;; '((1 y) (6 y));6
 
-;;; 1 _ _ 4 _ _ 7
-'((1 y) (4 y) (7 n));4
+
+;;; 1 _ 3 4
+;; '((1 n) (3 n) (4 n));0
+;; '((1 y) (3 n) (4 n));2
+;; '((1 n) (3 y) (4 n));2
+;; '((1 n) (3 n) (4 y));1
+;; '((1 y) (3 y) (4 n));3
+;; '((1 y) (3 n) (4 y));3
+;; '((1 n) (3 y) (4 y));3
+;; '((1 y) (3 y) (4 y));4
+
+
+;;; 1 2 _ 4
+;; '((1 n) (2 n) (4 n));0
+;; '((1 y) (2 n) (4 n));1
+;; '((1 n) (2 y) (4 n));2
+;; '((1 n) (2 n) (4 y));2
+;; '((1 y) (2 y) (4 n));3
+;; '((1 y) (2 n) (4 y));3
+;; '((1 n) (2 y) (4 y));3
+;; '((1 y) (2 y) (4 y));4
