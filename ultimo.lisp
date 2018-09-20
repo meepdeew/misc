@@ -47,31 +47,58 @@
 (floor (/ 5 2))
 (ceiling (/ 5 2))
 
-(let ((data '((1 y) (6 y)))
-      (sword-count 0))
 
+(let ((data '((1 y) (4 y) (7 n)))
+      (sword-count 0))
   (loop for (p1 p2) on data do
     (block loop-liner
       (let ((v1 (car p1))
             (v2 (car p2)))
-
-        (when (null p2)
-          (when (equal (second p1) 'y)
-            (incf sword-count))
-          (return-from loop-liner))
-
+        (when (equal (second p1) 'y) (incf sword-count))
+        (when (null p2) (return-from loop-liner))
         (let ((num-btwn (- v2 v1 1))
               (vm (/ (+ v1 v2) 2)))
-          (if (zerop num-btwn)
-              (if (equal (second p1) 'y)
-                  (incf sword-count)))
+          (when (zerop num-btwn) (return-from loop-liner))
 
-          (if (oddp num-btwn)
-              (format t "~&odd dif, midpt btwn ~a and ~a is ~a~%"
-                      v1 v2 vm))
+          (when (oddp num-btwn)
+            (when (or (equal (second p1) 'y) (equal (second p2) 'y))
+              (format t "~&inc for midpt at ~a~%" vm)
+              (incf sword-count))
+            (when (equal (second p1) 'y)
+              (format t "~&btwn ~a and ~a are ~a spots~%" v1 vm (- vm v1 1))
+              (incf sword-count (- vm v1 1)))
+            (when (equal (second p2) 'y)
+              (format t "~&btwn ~a and ~a are ~a spots~%" vm v2 (- v2 vm 1))
+              (incf sword-count (- v2 vm 1)))
+            (format t "~&odd dif, midpt btwn ~a and ~a is ~a~%" v1 v2 vm))
 
-          (if (evenp num-btwn)
-              (format t "~&even dif, btwn ~a and ~a are ~a and ~a~%"
-                      v1 v2 (floor vm) (ceiling vm)))
+          (when (evenp num-btwn)
+            (format t "~&even dif, btwn ~a and ~a are ~a and ~a~%"
+                    v1 v2 (floor vm) (ceiling vm)))
 
           )))) sword-count)
+
+;;; 1 2         --> (zerop num-btwn)
+'((1 n) (2 n));0
+'((1 y) (2 n));1
+'((1 n) (2 y));1
+'((1 y) (2 y));2
+
+;;; 1 _ 3       --> (oddp num-btwn)
+'((1 n) (3 n));0
+'((1 y) (3 n));2
+'((1 n) (3 y));2
+'((1 y) (3 y));3
+
+;;; 1 _ _ 4     --> (evenp num-btwn)
+
+;;; 1 _ _ _ 5   --> (oddp num-btwn)
+'((1 n) (5 n));0
+'((1 y) (5 n));3
+'((1 n) (5 y));3
+'((1 y) (5 y));5
+
+;;; 1 _ _ _ _ 6 --> (evenp num-btwn)
+
+;;; 1 _ _ 4 _ _ 7
+'((1 y) (4 y) (7 n));4
