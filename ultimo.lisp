@@ -27,41 +27,35 @@
 ;;;; NOTE
 ;;;; The program should be implemented in either C, C++, Java or Python. The implementation should be efficient and it should be able to handle one input file within a second. If you are using Python, the program should take less than 3 seconds for one input.
 
+(defun main (&optional (filename "./input.txt"))
+  (with-open-file (stream filename)
+    (let ((n (read stream))
+          (a (read stream))
+          (b (read stream)))
+      (let ((params (list :n n :a a :b b))
+            (data (loop for i upto (- n 1)
+                        collect
+                        (let ((w-row (if (equal (read stream) 'NS) 'n 'y))
+                              (v-row (read stream)))
+                          (list v-row w-row)))))
+        (format t  "~&headers ~S~%" params)
+        (format t "~&original data:~%~&~S~%" data)
+        (check-and-pad params data)))))
 
-
-
-(with-open-file (stream "./input.txt")
-  (let ((n (read stream))
-        (a (read stream))
-        (b (read stream)))
-    (format t  "~&headers ~A~%" (list n a b))
-    (loop for i upto (- n 1)
-          collect
-          (let ((w-row (if (equal (read stream) 'NS) 'n 'y))
-                (v-row (read stream)))
-            (format t "~&row: ~A ~A~%" v-row w-row)
-            (list v-row w-row)))))
-
-
-
-
-(let* ((params '(:n 1 :a 1 :b 3))
-       (data   '((1 y)))
-       ;; (n (getf params :n))
-       (a (getf params :a))
-       (b (getf params :b))
-       (first-pair (first data))
-       (final-pair (first (last data))))
-  ;; TODO: make sure data input is sorted
-  ;; TODO: check no rows outside A..B before padding
-  (if (not (= (first first-pair) a))
-      (setf data (cons (list a (second first-pair)) data)))
-  (if (not (= (first final-pair) b))
-      (setf data (append data (list (list b (second final-pair))))))
-  data)
-
-
-
+(defun check-and-pad (params data)
+  (let* (;; (n (getf params :n))
+         (a (getf params :a))
+         (b (getf params :b))
+         (first-pair (first data))
+         (final-pair (first (last data))))
+    ;; TODO: make sure data input is sorted
+    ;; TODO: check no rows outside A..B before padding
+    (if (not (= (first first-pair) a))
+        (setf data (cons (list a (second first-pair)) data)))
+    (if (not (= (first final-pair) b))
+        (setf data (append data (list (list b (second final-pair))))))
+    (format t "~&updated data:~%~&~S~%" data)
+    (count-swords data)))
 
 (defun count-swords (data)
   (let ((scount 0))
@@ -88,8 +82,8 @@
                 (incf scount (- (floor vm) v1)))
               (when (equal w2 'y)
                 (incf scount (- v2 (ceiling vm)))))))))
+    (format t "~&Number of opponents with ultimate sword: ~S~%" scount)
     scount))
-
 
 (equal
  (loop for x in
