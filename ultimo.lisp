@@ -38,8 +38,8 @@
                         (let ((w-row (if (equal (read stream) 'NS) 'n 'y))
                               (v-row (read stream)))
                           (list v-row w-row)))))
-        (format t  "~&headers ~S~%" params)
-        (format t "~&original data:~%~&~S~%" data)
+        ;; (format t  "~&headers ~S~%" params)
+        ;; (format t "~&original data:~%~&~S~%" data)
         (check-and-pad params data)))))
 
 (defun check-and-pad (params data)
@@ -54,7 +54,7 @@
         (setf data (cons (list a (second first-pair)) data)))
     (if (not (= (first final-pair) b))
         (setf data (append data (list (list b (second final-pair))))))
-    (format t "~&updated data:~%~&~S~%" data)
+    ;; (format t "~&updated data:~%~&~S~%" data)
     (count-swords data)))
 
 (defun count-swords (data)
@@ -82,137 +82,30 @@
                 (incf scount (- (floor vm) v1)))
               (when (equal w2 'y)
                 (incf scount (- v2 (ceiling vm)))))))))
-    (format t "~&Number of opponents with ultimate sword: ~S~%" scount)
+    ;; (format t "~&Number of opponents with ultimate sword: ~S~%" scount)
     scount))
 
-(equal
- (loop for x in
-       '(((1 n) (2 n))
-         ((1 y) (2 n))
-         ((1 n) (2 y))
-         ((1 y) (2 y)))
-       collect (count-swords x))
-       '(0 1 1 2))
+(defparameter test-cases
+  '(("./tests/input1.txt"  0) ("./tests/input2.txt"  1)
+    ("./tests/input3.txt"  1) ("./tests/input4.txt"  2)
+    ("./tests/input5.txt"  0) ("./tests/input6.txt"  2)
+    ("./tests/input7.txt"  2) ("./tests/input8.txt"  3)
+    ("./tests/input9.txt"  0) ("./tests/input10.txt" 2)
+    ("./tests/input11.txt" 2) ("./tests/input12.txt" 4)
+    ("./tests/input13.txt" 0) ("./tests/input14.txt" 3)
+    ("./tests/input15.txt" 3) ("./tests/input16.txt" 5)
+    ("./tests/input17.txt" 0) ("./tests/input18.txt" 3)
+    ("./tests/input19.txt" 3) ("./tests/input20.txt" 6)
+    ("./tests/input21.txt" 0) ("./tests/input22.txt" 2)
+    ("./tests/input23.txt" 2) ("./tests/input24.txt" 1)
+    ("./tests/input25.txt" 3) ("./tests/input26.txt" 3)
+    ("./tests/input27.txt" 3) ("./tests/input28.txt" 4)
+    ("./tests/input29.txt" 0) ("./tests/input30.txt" 1)
+    ("./tests/input31.txt" 2) ("./tests/input32.txt" 2)
+    ("./tests/input33.txt" 3) ("./tests/input34.txt" 3)
+    ("./tests/input35.txt" 3) ("./tests/input36.txt" 4)))
 
-(equal
- (loop for x in
-       '(((1 n) (3 n))
-         ((1 y) (3 n))
-         ((1 n) (3 y))
-         ((1 y) (3 y)))
-       collect (count-swords x))
- '(0 2 2 3))
-
-(equal
- (loop for x in
-       '(((1 n) (4 n))
-         ((1 n) (4 y))
-         ((1 y) (4 n))
-         ((1 y) (4 y)))
-       collect (count-swords x))
- '(0 2 2 4))
-
-(equal
- (loop for x in
-       '(((1 n) (5 n))
-         ((1 y) (5 n))
-         ((1 n) (5 y))
-         ((1 y) (5 y)))
-       collect (count-swords x))
- '(0 3 3 5))
-
-(equal
- (loop for x in
-       '(((1 n) (6 n))
-         ((1 n) (6 y))
-         ((1 y) (6 n))
-         ((1 y) (6 y)))
-       collect (count-swords x))
- '(0 3 3 6))
-
-(equal
- (loop for x in
-       '(((1 n) (3 n) (4 n))
-         ((1 y) (3 n) (4 n))
-         ((1 n) (3 y) (4 n))
-         ((1 n) (3 n) (4 y))
-         ((1 y) (3 y) (4 n))
-         ((1 y) (3 n) (4 y))
-         ((1 n) (3 y) (4 y))
-         ((1 y) (3 y) (4 y)))
-       collect (count-swords x))
- '(0 2 2 1 3 3 3 4))
-
-(equal
- (loop for x in
-       '(((1 n) (2 n) (4 n))
-         ((1 y) (2 n) (4 n))
-         ((1 n) (2 y) (4 n))
-         ((1 n) (2 n) (4 y))
-         ((1 y) (2 y) (4 n))
-         ((1 y) (2 n) (4 y))
-         ((1 n) (2 y) (4 y))
-         ((1 y) (2 y) (4 y)))
-       collect (count-swords x))
- '(0 1 2 2 3 3 3 4))
-
-
-;;; TODO: 1 _ _ 4 _ _ 7
-'((1 y) (4 y) (7 n));4
-
-
-;;; 1 2         --> (zerop num-btwn)
-;; '((1 n) (2 n));0
-;; '((1 y) (2 n));1
-;; '((1 n) (2 y));1
-;; '((1 y) (2 y));2
-
-
-;;; 1 _ 3       --> (oddp num-btwn)
-;; '((1 n) (3 n));0
-;; '((1 y) (3 n));2
-;; '((1 n) (3 y));2
-;; '((1 y) (3 y));3
-
-
-;;; 1 _ _ 4     --> (evenp num-btwn)
-;; '((1 n) (4 n));0
-;; '((1 n) (4 y));2
-;; '((1 y) (4 n));2
-;; '((1 y) (4 y));4
-
-
-;;; 1 _ _ _ 5   --> (oddp num-btwn)
-;; '((1 n) (5 n));0
-;; '((1 y) (5 n));3
-;; '((1 n) (5 y));3
-;; '((1 y) (5 y));5
-
-
-;;; 1 _ _ _ _ 6 --> (evenp num-btwn)
-;; '((1 n) (6 n));0
-;; '((1 n) (6 y));3
-;; '((1 y) (6 n));3
-;; '((1 y) (6 y));6
-
-
-;;; 1 _ 3 4
-;; '((1 n) (3 n) (4 n));0
-;; '((1 y) (3 n) (4 n));2
-;; '((1 n) (3 y) (4 n));2
-;; '((1 n) (3 n) (4 y));1
-;; '((1 y) (3 y) (4 n));3
-;; '((1 y) (3 n) (4 y));3
-;; '((1 n) (3 y) (4 y));3
-;; '((1 y) (3 y) (4 y));4
-
-
-;;; 1 2 _ 4
-;; '((1 n) (2 n) (4 n));0
-;; '((1 y) (2 n) (4 n));1
-;; '((1 n) (2 y) (4 n));2
-;; '((1 n) (2 n) (4 y));2
-;; '((1 y) (2 y) (4 n));3
-;; '((1 y) (2 n) (4 y));3
-;; '((1 n) (2 y) (4 y));3
-;; '((1 y) (2 y) (4 y));4
+(loop for test-case in test-cases do
+  (let ((fname (first test-case))
+        (expected (second test-case)))
+    (format t "~&~A is ~A~%" fname (= (main fname) expected))))
