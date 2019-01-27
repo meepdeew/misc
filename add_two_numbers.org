@@ -1,0 +1,62 @@
+Fun with applying HTDP methodology in another language using an example from LeetCode.
+
+Add Two Numbers
+
+You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
+
+You may assume the two numbers do not contain any leading zero, except the number 0 itself.
+
+Example:
+#+BEGIN_SRC text
+Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
+Output: 7 -> 0 -> 8
+Explanation: 342 + 465 = 807.
+#+END_SRC
+
+Java Solution:
+#+BEGIN_SRC java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+
+    // { 1 } { 3 } 0 -> { 4 }
+    public ListNode addNextLayer(ListNode l1, ListNode l2, int carry) {
+        int l1EquivVal = 0;
+        int l2EquivVal = 0;
+        ListNode nextL1 = null;
+        ListNode nextL2 = null;
+
+        if (l1 != null) l1EquivVal = l1.val;
+        if (l2 != null) l2EquivVal = l2.val;
+
+        int sum = l1EquivVal + l2EquivVal + carry;
+        int actualVal = sum % 10;
+        int nextCarry = sum / 10;
+
+        if (l1 != null) nextL1 = l1.next;
+        if (l2 != null) nextL2 = l2.next;
+
+        ListNode curNode = null;
+        curNode = new ListNode(actualVal);
+        if (nextL1 == null && nextL2 == null && nextCarry == 0) {
+            return curNode;
+        }
+        curNode.next = addNextLayer(nextL1, nextL2, nextCarry);
+        return curNode;
+    }
+
+    // {2 -> 4 -> 3} {5 -> 6 -> 4} -> {7 -> 0 -> 8}
+    // 2 + 5 = 7
+    // 4 + 6 = 10, so 0 carry a 1
+    // 3 + 4 (+ the 1 carried) = 8
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        return addNextLayer(l1, l2, 0);
+    }
+}
+#+END_SRC
