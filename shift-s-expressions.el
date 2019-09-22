@@ -57,19 +57,19 @@
 (global-set-key (kbd "C-c <right>") 'shift-func-right-handler)
 (global-set-key (kbd "C-c <left>") 'shift-func-left-handler)
 
-(mv-rt '(+ 2 3)) ;; (2 + 3)
-(mv-rt '(2 + 3)) ;; (2 3 +)
-(mv-rt '(2 3 +)) ;; (2 3 +)
+(mv '(+ 2 3) "right") ;; (2 + 3)
+(mv '(2 + 3) "right") ;; (2 3 +)
+(mv '(2 3 +) "right") ;; (2 3 +)
 
-(mv-lt '(2 3 +)) ;; (2 + 3)
-(mv-lt '(2 + 3)) ;; (+ 2 3)
-(mv-lt '(+ 2 3)) ;; (+ 2 3)
+(mv '(2 3 +) "left") ;; (2 + 3)
+(mv '(2 + 3) "left") ;; (+ 2 3)
+(mv '(+ 2 3) "left") ;; (+ 2 3)
 
 (count-fns '('+ '2 '3))
 (count-fns '(+ 2 3))
 
-(functionp '+)
-(functionp ''+)
+(functionp '+)  ;; t
+(functionp ''+) ;; nil
 
 (insert-fn/pos '+ '0 '(2 3)) ;; (+ 2 3)
 (insert-fn/pos '+ '1 '(2 3)) ;; (2 + 3)
@@ -77,14 +77,14 @@
 (insert-fn/pos '+ 2 '(2 3)) ;; (2 3 +)
 (insert-fn/pos '+ 3 '(2 3)) ;; nil
 
-(extract-fn/pos '(+ 2 3))
+(extract-fn/pos '(+ 2 3)) ;; (+ 0 (2 3))
 (extract-fn/pos '(2 + 3)) ;; (+ 1 (2 3))
 (extract-fn/pos '(2 3 +)) ;; (+ 2 (2 3))
 
-(insert-fn/pos '+ '0 '(2 3))
-(insert-fn/pos '+ '1 '(2 3))
-(insert-fn/pos '+ '2 '(2 3))
-(insert-fn/pos '+ 2 '(2 3))
-(insert-fn/pos '+ 3 '(2 3))
+(insert-fn/pos '+ '0 '(2 3)) ;; (+ 2 3)
+(insert-fn/pos '+ '1 '(2 3)) ;; (2 + 3)
+(insert-fn/pos '+ '2 '(2 3)) ;; (2 3 +)
+(insert-fn/pos '+ 2 '(2 3)) ;; (2 3 +)
+(insert-fn/pos '+ 3 '(2 3)) ;; nil
 
 
